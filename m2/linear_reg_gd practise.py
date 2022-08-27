@@ -16,7 +16,7 @@ def h(params, sample):
 	acum = 0
 	for i in range(len(params)):
 		acum = acum + params[i]*sample[i]  #evaluates h(x) = a+bx1+cx2+ ... nxn.. 
-	return acum;
+	return acum
 
 
 def show_errors(params, samples,y):
