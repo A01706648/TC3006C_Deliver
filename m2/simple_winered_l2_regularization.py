@@ -154,7 +154,7 @@ def train_model(model, train_data, train_targets, epochs):
     train_data and train_targets. 
     Your function should return the training history, as returned by model.fit.
     """
-    return model.fit(train_data, train_targets, epochs = epochs, validation_split = 0.15, batch_size = 40, verbose=0)
+    return model.fit(train_data, train_targets, epochs = epochs, validation_split = 0.15, batch_size = 40, verbose=1)
 
 """Run the following cell to run the training for 800 epochs."""
 
@@ -162,39 +162,7 @@ def train_model(model, train_data, train_targets, epochs):
 
 history = train_model(model, train_data, train_targets, epochs=500)
 
-"""#### Plot the learning curves
 
-We will now plot two graphs:
-* Epoch vs accuracy
-* Epoch vs loss
-
-"""
-
-# Run this cell to plot the epoch vs accuracy graph
-
-try:
-    plt.plot(history.history['binary_accuracy'])
-    plt.plot(history.history['val_binary_accuracy'])
-except KeyError:
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-plt.title('No Regularizaion Accuracy vs. epochs')
-plt.ylabel('Accuracy')
-plt.xlabel('Epoch')
-plt.legend(['Training', 'Validation'], loc='lower right')
-plt.show()
-
-#Run this cell to plot the epoch vs loss graph
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('No Regularizaion  Loss vs. epochs')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend(['Training', 'Validation'], loc='upper right')
-plt.show()
-
-test_loss, test_acc = model.evaluate(test_data, test_targets, verbose=0)
-print("No Regularization Test loss: {:.3f}\nTest accuracy: {:.2f}%".format(test_loss, 100 * test_acc))
 
 """Oh no! We have overfit our dataset. You should now try to now try to mitigate this overfitting.
 
@@ -260,31 +228,59 @@ reg_history = train_model(reg_model, train_data, train_targets, epochs=2000)
 Let's now plot the loss and accuracy for the training and validation sets.
 """
 
-#Run this cell to plot the new accuracy vs epoch graph
-
-try:
-    plt.plot(reg_history.history['binary_accuracy'])
-    plt.plot(reg_history.history['val_binary_accuracy'])
-except KeyError:
-    plt.plot(reg_history.history['acc'])
-    plt.plot(reg_history.history['val_acc'])
-plt.title('With Regularizaion Accuracy vs. epochs')
-plt.ylabel('Accuracy')
-plt.xlabel('Epoch')
-plt.legend(['Training', 'Validation'], loc='lower right')
-plt.show()
-
-#Run this cell to plot the new loss vs epoch graph
-
-plt.plot(reg_history.history['loss'])
-plt.plot(reg_history.history['val_loss'])
-plt.title('With Regularizaion Loss vs. epochs')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend(['Training', 'Validation'], loc='upper right')
-plt.show()
-
 # Evaluate the model on the test set
+test_loss, test_acc = model.evaluate(test_data, test_targets, verbose=1)
+print("\nNo Regularization \nTest loss: {:.3f}\nTest accuracy: {:.2f}%\n".format(test_loss, 100 * test_acc))
 
-test_loss, test_acc = reg_model.evaluate(test_data, test_targets, verbose=0)
-print("With Regularization Test loss: {:.3f}\nTest accuracy: {:.2f}%".format(test_loss, 100 * test_acc))
+test_loss, test_acc = reg_model.evaluate(test_data, test_targets, verbose=1)
+print("\nWith Regularization \nTest loss: {:.3f}\nTest accuracy: {:.2f}%\n".format(test_loss, 100 * test_acc))
+
+fig, axs = plt.subplots(2, 2)
+
+#axs[0, 0].plot(x, y)
+#axs[0, 0].set_title("main")
+try:
+    axs[0, 0].plot(history.history['binary_accuracy'])
+    axs[0, 0].plot(history.history['val_binary_accuracy'])
+except KeyError:
+    axs[0, 0].plot(history.history['acc'])
+    axs[0, 0].plot(history.history['val_acc'])
+axs[0, 0].set_title('No Reg Accuracy vs. epochs')
+axs[0, 0].set_ylabel('Accuracy')
+axs[0, 0].set_xlabel('Epoch')
+axs[0, 0].legend(['Training', 'Validation'], loc='lower right')
+
+#axs[1, 0].plot(x, y**2)
+#axs[1, 0].set_title("shares x with main")
+#axs[1, 0].sharex(axs[0, 0])
+axs[1, 0].plot(history.history['loss'])
+axs[1, 0].plot(history.history['val_loss'])
+axs[1, 0].set_title('No Reg Loss vs. epochs')
+axs[1, 0].set_ylabel('Loss')
+axs[1, 0].set_xlabel('Epoch')
+axs[1, 0].legend(['Training', 'Validation'], loc='upper right')
+
+#axs[0, 1].plot(x + 1, y + 1)
+#axs[0, 1].set_title("unrelated")
+try:
+    axs[0, 1].plot(reg_history.history['binary_accuracy'])
+    axs[0, 1].plot(reg_history.history['val_binary_accuracy'])
+except KeyError:
+    axs[0, 1].plot(reg_history.history['acc'])
+    axs[0, 1].plot(reg_history.history['val_acc'])
+axs[0, 1].set_title('With Reg Accuracy vs. epochs')
+axs[0, 1].set_ylabel('Accuracy')
+axs[0, 1].set_xlabel('Epoch')
+axs[0, 1].legend(['Training', 'Validation'], loc='lower right')
+
+#axs[1, 1].plot(x + 2, y + 2)
+#axs[1, 1].set_title("also unrelated")
+axs[1, 1].plot(reg_history.history['loss'])
+axs[1, 1].plot(reg_history.history['val_loss'])
+axs[1, 1].set_title('With Reg Loss vs. epochs')
+axs[1, 1].set_ylabel('Loss')
+axs[1, 1].set_xlabel('Epoch')
+axs[1, 1].legend(['Training', 'Validation'], loc='upper right')
+
+fig.tight_layout()
+plt.show()
